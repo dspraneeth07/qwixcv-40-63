@@ -44,6 +44,7 @@ import AuthLayout from "./pages/Auth/AuthLayout";
 import BlockchainVault from "./pages/BlockchainVault";
 import About from "@/pages/About";
 import Contact from "@/pages/Contact";
+import QwixAI from "./pages/QwixAI";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -159,6 +160,16 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <ResumeCompare />
+                  </ProtectedRoute>
+                } 
+              />
+              
+              {/* QwixAI Route */}
+              <Route 
+                path="/qwix-ai" 
+                element={
+                  <ProtectedRoute>
+                    <QwixAI />
                   </ProtectedRoute>
                 } 
               />

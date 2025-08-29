@@ -11,14 +11,14 @@ import {
   Send, 
   Bot, 
   User, 
-  Linkedin, 
   Sparkles,
   Loader2,
   MessageSquare,
   Lightbulb,
-  AlertCircle
+  AlertCircle,
+  Zap
 } from "lucide-react";
-import { generateLinkedInSuggestions } from "@/utils/linkedinAI";
+import { generateQwixAIResponse } from "@/utils/qwixAI";
 
 interface ChatMessage {
   id: string;
@@ -29,18 +29,18 @@ interface ChatMessage {
   error?: boolean;
 }
 
-const LinkedInChatbot = () => {
+const QwixAIChatbot = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: '1',
       role: 'assistant',
-      content: "Hi! I'm your LinkedIn optimization assistant powered by Gemini AI. I can help you improve your profile, write better headlines, optimize your summary, suggest keywords, and much more. What would you like to work on today?",
+      content: "Namaste! 🙏 I'm QwixAI - Your intelligent assistant representing Telangana & Andhra Pradesh! I'm here to help you with anything - from coding and career advice to cultural insights and general knowledge. What would you like to explore today?",
       timestamp: new Date(),
       suggestions: [
-        "Improve my headline",
-        "Write a better summary",
-        "Optimize for keywords",
-        "Experience descriptions"
+        "Tell me about Telangana",
+        "Help with coding",
+        "Career guidance",
+        "General questions"
       ]
     }
   ]);
@@ -74,14 +74,12 @@ const LinkedInChatbot = () => {
     setIsLoading(true);
 
     try {
-      console.log("🚀 Sending message to LinkedinAI:", messageToSend);
+      console.log("🚀 Sending message to QwixAI:", messageToSend);
       
-      // Generate AI response using Gemini API
-      const response = await generateLinkedInSuggestions(messageToSend);
+      const response = await generateQwixAIResponse(messageToSend);
       
-      console.log("✅ Received response from LinkedinAI:", response);
+      console.log("✅ Received response from QwixAI:", response);
       
-      // Add assistant response
       const assistantMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
@@ -94,10 +92,10 @@ const LinkedInChatbot = () => {
       
       toast({
         title: "Response generated!",
-        description: "LinkedIn optimization suggestions ready.",
+        description: "QwixAI is ready to help you further.",
       });
     } catch (error) {
-      console.error('❌ Error in handleSendMessage:', error);
+      console.error('❌ Error in QwixAI:', error);
       
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       
@@ -107,18 +105,17 @@ const LinkedInChatbot = () => {
         variant: "destructive"
       });
       
-      // Add error message to chat
       const errorChatMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: `I apologize, but I encountered an error: ${errorMessage}. Please try asking your question again, or try a different approach.`,
+        content: `I apologize, but I encountered an error: ${errorMessage}. Please try asking your question again. As QwixAI from Telangana & Andhra Pradesh, I'm here to help you with anything!`,
         timestamp: new Date(),
         error: true,
         suggestions: [
-          "Try a simpler question",
-          "Ask about LinkedIn headlines", 
-          "Get summary writing tips",
-          "Request keyword suggestions"
+          "Try a different question",
+          "Ask about technology", 
+          "Get career advice",
+          "Learn about our states"
         ]
       };
       setMessages(prev => [...prev, errorChatMessage]);
@@ -141,17 +138,20 @@ const LinkedInChatbot = () => {
   return (
     <div className="h-[700px] flex flex-col max-w-4xl mx-auto">
       <Card className="flex-1 flex flex-col overflow-hidden">
-        <CardHeader className="pb-3 flex-shrink-0">
+        <CardHeader className="pb-3 flex-shrink-0 bg-gradient-to-r from-orange-50 to-purple-50 border-b">
           <CardTitle className="flex items-center gap-2">
-            <div className="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full">
-              <Linkedin className="h-4 w-4 text-blue-600" />
+            <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-r from-orange-500 to-purple-600 rounded-full">
+              <Zap className="h-4 w-4 text-white" />
             </div>
-            LinkedIn AI Assistant
-            <Badge variant="secondary" className="ml-2">
+            QwixAI Assistant
+            <Badge variant="secondary" className="ml-2 bg-gradient-to-r from-orange-100 to-purple-100">
               <Sparkles className="h-3 w-3 mr-1" />
-              Gemini Powered
+              Telangana & AP AI
             </Badge>
           </CardTitle>
+          <p className="text-sm text-muted-foreground">
+            First AI Assistant proudly representing Telangana & Andhra Pradesh 🏛️
+          </p>
         </CardHeader>
         
         <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
@@ -162,12 +162,12 @@ const LinkedInChatbot = () => {
                   <Avatar className="w-8 h-8 flex-shrink-0">
                     <AvatarFallback className={
                       message.error ? 'bg-red-100' :
-                      message.role === 'assistant' ? 'bg-blue-100' : 'bg-gray-100'
+                      message.role === 'assistant' ? 'bg-gradient-to-r from-orange-100 to-purple-100' : 'bg-gray-100'
                     }>
                       {message.error ? (
                         <AlertCircle className="h-4 w-4 text-red-600" />
                       ) : message.role === 'assistant' ? (
-                        <Bot className="h-4 w-4 text-blue-600" />
+                        <Bot className="h-4 w-4 text-orange-600" />
                       ) : (
                         <User className="h-4 w-4 text-gray-600" />
                       )}
@@ -178,7 +178,7 @@ const LinkedInChatbot = () => {
                     <div className={`p-3 rounded-lg max-w-full break-words ${
                       message.error ? 'bg-red-50 border border-red-200' :
                       message.role === 'assistant' 
-                        ? 'bg-blue-50 border border-blue-100' 
+                        ? 'bg-gradient-to-r from-orange-50 to-purple-50 border border-orange-200' 
                         : 'bg-gray-50 border border-gray-100'
                     }`}>
                       <p className="text-sm whitespace-pre-wrap leading-relaxed">{message.content}</p>
@@ -192,7 +192,7 @@ const LinkedInChatbot = () => {
                             variant="outline"
                             size="sm"
                             onClick={() => handleSuggestionClick(suggestion)}
-                            className="text-xs h-7 px-2"
+                            className="text-xs h-7 px-2 border-orange-200 hover:bg-orange-50"
                           >
                             <Lightbulb className="h-3 w-3 mr-1" />
                             {suggestion}
@@ -207,15 +207,15 @@ const LinkedInChatbot = () => {
               {isLoading && (
                 <div className="flex gap-3 animate-in slide-in-from-bottom-2">
                   <Avatar className="w-8 h-8 flex-shrink-0">
-                    <AvatarFallback className="bg-blue-100">
-                      <Bot className="h-4 w-4 text-blue-600" />
+                    <AvatarFallback className="bg-gradient-to-r from-orange-100 to-purple-100">
+                      <Bot className="h-4 w-4 text-orange-600" />
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
-                    <div className="p-3 rounded-lg bg-blue-50 border border-blue-100 max-w-full">
+                    <div className="p-3 rounded-lg bg-gradient-to-r from-orange-50 to-purple-50 border border-orange-200 max-w-full">
                       <div className="flex items-center gap-2">
-                        <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
-                        <p className="text-sm text-blue-600">Analyzing with Gemini AI and generating LinkedIn suggestions...</p>
+                        <Loader2 className="h-4 w-4 animate-spin text-orange-600" />
+                        <p className="text-sm text-orange-600">QwixAI is thinking and preparing your response...</p>
                       </div>
                     </div>
                   </div>
@@ -231,7 +231,7 @@ const LinkedInChatbot = () => {
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Ask me anything about LinkedIn optimization..."
+                placeholder="Ask QwixAI anything - I'm here to help from Telangana & Andhra Pradesh!"
                 disabled={isLoading}
                 className="flex-1"
               />
@@ -239,6 +239,7 @@ const LinkedInChatbot = () => {
                 onClick={() => handleSendMessage()} 
                 disabled={!inputMessage.trim() || isLoading}
                 size="icon"
+                className="bg-gradient-to-r from-orange-500 to-purple-600 hover:from-orange-600 hover:to-purple-700"
               >
                 {isLoading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -251,7 +252,7 @@ const LinkedInChatbot = () => {
             <div className="flex items-center gap-2 mt-3">
               <MessageSquare className="h-4 w-4 text-gray-400" />
               <p className="text-xs text-gray-500">
-                Powered by Google Gemini AI for professional LinkedIn optimization
+                Powered by QwixAI - First AI Assistant from Telangana & Andhra Pradesh 🇮🇳
               </p>
             </div>
           </div>
@@ -261,4 +262,4 @@ const LinkedInChatbot = () => {
   );
 };
 
-export default LinkedInChatbot;
+export default QwixAIChatbot;
