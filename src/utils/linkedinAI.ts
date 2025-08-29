@@ -12,6 +12,10 @@ export const generateLinkedInSuggestions = async (userMessage: string): Promise<
   console.log("🤖 LinkedInAI: Processing user query:", userMessage);
   console.log("🔑 Using Gemini Flash 2.0 with LinkedIn-specific API key");
   
+  if (!apiKeys.LINKEDIN_OPTIMIZER_API_KEY) {
+    throw new Error("LinkedIn Optimizer API key is not configured");
+  }
+  
   const prompt = `
     You are an expert LinkedIn optimization consultant with years of experience helping professionals enhance their profiles. 
     
@@ -36,32 +40,48 @@ export const generateLinkedInSuggestions = async (userMessage: string): Promise<
   try {
     console.log("📡 Making API call to Gemini Flash 2.0 for LinkedIn optimization...");
     
+    const requestBody = {
+      contents: [{
+        parts: [{ text: prompt }]
+      }],
+      generationConfig: {
+        temperature: 0.7,
+        maxOutputTokens: 1024,
+        topP: 0.9,
+        topK: 40
+      }
+    };
+
+    console.log("Request URL:", `${API_URL}?key=${apiKeys.LINKEDIN_OPTIMIZER_API_KEY.substring(0, 10)}...`);
+    
     const response = await fetch(`${API_URL}?key=${apiKeys.LINKEDIN_OPTIMIZER_API_KEY}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        contents: [{
-          parts: [{ text: prompt }]
-        }],
-        generationConfig: {
-          temperature: 0.7,
-          maxOutputTokens: 1024,
-          topP: 0.9,
-          topK: 40
-        }
-      })
+      body: JSON.stringify(requestBody)
     });
 
+    console.log("Response status:", response.status);
+
     if (!response.ok) {
-      throw new Error(`API error: ${response.status}`);
+      const errorText = await response.text();
+      console.error("API Error Response:", errorText);
+      throw new Error(`Gemini API error: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
+    console.log("API Response received:", data);
+    
+    if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
+      console.error("Unexpected API response structure:", data);
+      throw new Error("Invalid response from Gemini API");
+    }
+
     const fullResponse = data.candidates[0].content.parts[0].text;
     
     console.log("✅ LinkedInAI: Generated response successfully");
+    console.log("Response content:", fullResponse);
     
     // Extract suggestions if present
     const suggestionsMatch = fullResponse.match(/SUGGESTIONS:\s*\[(.*?)\]/);
@@ -89,6 +109,18 @@ export const generateLinkedInSuggestions = async (userMessage: string): Promise<
     };
   } catch (error) {
     console.error("❌ LinkedinAI: Error generating response:", error);
+    
+    // Provide more specific error messages
+    if (error instanceof Error) {
+      if (error.message.includes('API key')) {
+        throw new Error("Invalid API key. Please check your Gemini API configuration.");
+      } else if (error.message.includes('quota')) {
+        throw new Error("API quota exceeded. Please try again later.");
+      } else if (error.message.includes('network')) {
+        throw new Error("Network error. Please check your internet connection.");
+      }
+    }
+    
     throw error;
   }
 };

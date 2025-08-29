@@ -15,7 +15,8 @@ import {
   Sparkles,
   Loader2,
   MessageSquare,
-  Lightbulb
+  Lightbulb,
+  AlertCircle
 } from "lucide-react";
 import { generateLinkedInSuggestions } from "@/utils/linkedinAI";
 
@@ -25,6 +26,7 @@ interface ChatMessage {
   content: string;
   timestamp: Date;
   suggestions?: string[];
+  error?: boolean;
 }
 
 const LinkedInChatbot = () => {
@@ -32,7 +34,7 @@ const LinkedInChatbot = () => {
     {
       id: '1',
       role: 'assistant',
-      content: "Hi! I'm your LinkedIn optimization assistant. I can help you improve your profile, write better headlines, optimize your summary, suggest keywords, and much more. What would you like to work on today?",
+      content: "Hi! I'm your LinkedIn optimization assistant powered by Gemini AI. I can help you improve your profile, write better headlines, optimize your summary, suggest keywords, and much more. What would you like to work on today?",
       timestamp: new Date(),
       suggestions: [
         "Improve my headline",
@@ -72,8 +74,12 @@ const LinkedInChatbot = () => {
     setIsLoading(true);
 
     try {
+      console.log("🚀 Sending message to LinkedinAI:", messageToSend);
+      
       // Generate AI response using Gemini API
       const response = await generateLinkedInSuggestions(messageToSend);
+      
+      console.log("✅ Received response from LinkedinAI:", response);
       
       // Add assistant response
       const assistantMessage: ChatMessage = {
@@ -85,22 +91,37 @@ const LinkedInChatbot = () => {
       };
 
       setMessages(prev => [...prev, assistantMessage]);
+      
+      toast({
+        title: "Response generated!",
+        description: "LinkedIn optimization suggestions ready.",
+      });
     } catch (error) {
-      console.error('Error generating response:', error);
+      console.error('❌ Error in handleSendMessage:', error);
+      
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      
       toast({
         title: "Error",
-        description: "Failed to generate response. Please try again.",
+        description: errorMessage,
         variant: "destructive"
       });
       
-      // Add error message
-      const errorMessage: ChatMessage = {
+      // Add error message to chat
+      const errorChatMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: "I'm sorry, I encountered an error while processing your request. Please try again or rephrase your question.",
-        timestamp: new Date()
+        content: `I apologize, but I encountered an error: ${errorMessage}. Please try asking your question again, or try a different approach.`,
+        timestamp: new Date(),
+        error: true,
+        suggestions: [
+          "Try a simpler question",
+          "Ask about LinkedIn headlines", 
+          "Get summary writing tips",
+          "Request keyword suggestions"
+        ]
       };
-      setMessages(prev => [...prev, errorMessage]);
+      setMessages(prev => [...prev, errorChatMessage]);
     } finally {
       setIsLoading(false);
     }
@@ -128,7 +149,7 @@ const LinkedInChatbot = () => {
             LinkedIn AI Assistant
             <Badge variant="secondary" className="ml-2">
               <Sparkles className="h-3 w-3 mr-1" />
-              AI Powered
+              Gemini Powered
             </Badge>
           </CardTitle>
         </CardHeader>
@@ -139,8 +160,13 @@ const LinkedInChatbot = () => {
               {messages.map((message) => (
                 <div key={message.id} className="flex gap-3">
                   <Avatar className="w-8 h-8">
-                    <AvatarFallback className={message.role === 'assistant' ? 'bg-blue-100' : 'bg-gray-100'}>
-                      {message.role === 'assistant' ? (
+                    <AvatarFallback className={
+                      message.error ? 'bg-red-100' :
+                      message.role === 'assistant' ? 'bg-blue-100' : 'bg-gray-100'
+                    }>
+                      {message.error ? (
+                        <AlertCircle className="h-4 w-4 text-red-600" />
+                      ) : message.role === 'assistant' ? (
                         <Bot className="h-4 w-4 text-blue-600" />
                       ) : (
                         <User className="h-4 w-4 text-gray-600" />
@@ -150,6 +176,7 @@ const LinkedInChatbot = () => {
                   
                   <div className="flex-1 space-y-2">
                     <div className={`p-3 rounded-lg ${
+                      message.error ? 'bg-red-50 border border-red-200' :
                       message.role === 'assistant' 
                         ? 'bg-blue-50 border border-blue-100' 
                         : 'bg-gray-50 border border-gray-100'
@@ -188,7 +215,7 @@ const LinkedInChatbot = () => {
                     <div className="p-3 rounded-lg bg-blue-50 border border-blue-100">
                       <div className="flex items-center gap-2">
                         <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
-                        <p className="text-sm text-blue-600">Analyzing and generating suggestions...</p>
+                        <p className="text-sm text-blue-600">Analyzing with Gemini AI and generating LinkedIn suggestions...</p>
                       </div>
                     </div>
                   </div>
@@ -224,7 +251,7 @@ const LinkedInChatbot = () => {
             <div className="flex items-center gap-2 mt-3">
               <MessageSquare className="h-4 w-4 text-gray-400" />
               <p className="text-xs text-gray-500">
-                Powered by advanced AI models for LinkedIn optimization
+                Powered by Google Gemini AI for professional LinkedIn optimization
               </p>
             </div>
           </div>
