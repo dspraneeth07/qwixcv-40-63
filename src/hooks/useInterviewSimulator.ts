@@ -9,6 +9,7 @@ import {
   generateEnhancedPDF 
 } from "@/utils/interviewAI";
 import { apiKeys } from "@/utils/apiKeys";
+import { ttsService } from "@/utils/textToSpeech";
 
 export const useInterviewSimulator = () => {
   const { toast } = useToast();
@@ -26,6 +27,7 @@ export const useInterviewSimulator = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [timePerQuestion, setTimePerQuestion] = useState(120); // 2 minutes default
+  const [isSpeaking, setIsSpeaking] = useState(false);
   
   // Refs
   const timerRef = useRef<number | null>(null);
@@ -35,6 +37,41 @@ export const useInterviewSimulator = () => {
   const progress = questions.length > 0 
     ? ((currentQuestionIndex + 1) / questions.length) * 100
     : 0;
+  
+  // Text-to-speech functions
+  const speakQuestion = async (questionText: string) => {
+    if (!ttsService.isSupported()) {
+      toast({
+        title: "Text-to-Speech not supported",
+        description: "Your browser doesn't support text-to-speech functionality.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      setIsSpeaking(true);
+      await ttsService.speak({
+        text: questionText,
+        speed: 0.9,
+        pitch: 1.0
+      });
+    } catch (error) {
+      console.error("Error speaking question:", error);
+      toast({
+        title: "Speech Error",
+        description: "Failed to read the question aloud.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSpeaking(false);
+    }
+  };
+
+  const stopSpeaking = () => {
+    ttsService.stop();
+    setIsSpeaking(false);
+  };
   
   // Start interview
   const startInterview = async () => {
@@ -50,9 +87,6 @@ export const useInterviewSimulator = () => {
     setIsLoading(true);
     
     try {
-      // For demo purposes, use a predefined Gemini API key or simulated data
-      const geminiKey = apiKeys.GEMINI_API_KEY || 'demo-key';
-      
       const generatedQuestions = await analyzeResumeAndGenerateQuestions({
         jobTitle: jobRole,
         jobLevel: 'mid',  // Default to mid-level
@@ -61,7 +95,7 @@ export const useInterviewSimulator = () => {
         duration: timePerQuestion * 8 / 60, // Estimate total duration based on questions
         difficulty: 'medium',
         interviewType: 'mixed'
-      }, geminiKey);
+      });
       
       if (!generatedQuestions || generatedQuestions.length === 0) {
         throw new Error("Failed to generate interview questions");
@@ -76,6 +110,11 @@ export const useInterviewSimulator = () => {
       
       // Start timer
       startTimer();
+      
+      // Speak the first question
+      setTimeout(() => {
+        speakQuestion(generatedQuestions[0].question);
+      }, 1000);
       
       toast({
         title: "Interview Started",
@@ -97,6 +136,7 @@ export const useInterviewSimulator = () => {
   const endInterview = () => {
     stopTimer();
     stopListening();
+    stopSpeaking();
     setInterviewStarted(false);
     setInterviewCompleted(false);
     setCurrentQuestionIndex(0);
@@ -138,8 +178,14 @@ export const useInterviewSimulator = () => {
   // Navigation
   const nextQuestion = () => {
     if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
+      const nextIndex = currentQuestionIndex + 1;
+      setCurrentQuestionIndex(nextIndex);
       resetTimer();
+      
+      // Speak the next question after a short delay
+      setTimeout(() => {
+        speakQuestion(questions[nextIndex].question);
+      }, 500);
     } else {
       // Complete the interview
       setInterviewCompleted(true);
@@ -150,8 +196,14 @@ export const useInterviewSimulator = () => {
   
   const previousQuestion = () => {
     if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(currentQuestionIndex - 1);
+      const prevIndex = currentQuestionIndex - 1;
+      setCurrentQuestionIndex(prevIndex);
       resetTimer();
+      
+      // Speak the previous question after a short delay
+      setTimeout(() => {
+        speakQuestion(questions[prevIndex].question);
+      }, 500);
     }
   };
   
@@ -164,8 +216,9 @@ export const useInterviewSimulator = () => {
   
   // Submit and get feedback
   const submitAnswer = async (answer: string) => {
-    // Stop timer
+    // Stop timer and speech
     stopTimer();
+    stopSpeaking();
     
     // Stop speech recognition if active
     if (isListening) {
@@ -193,16 +246,12 @@ export const useInterviewSimulator = () => {
       // Get AI feedback
       const currentQuestion = questions[currentQuestionIndex];
       
-      // For demo purposes, use a predefined Gemini API key
-      const geminiKey = apiKeys.GEMINI_API_KEY || 'demo-key';
-      
       // Generate feedback
       const feedbackText = await evaluateAnswer(
         currentQuestion.question,
         answer,
         jobRole,
-        'mid-level',  // Default level
-        geminiKey
+        'mid-level'
       );
       
       // Create feedback object
@@ -299,6 +348,9 @@ export const useInterviewSimulator = () => {
   };
   
   const startListening = () => {
+    // Stop any ongoing speech first
+    stopSpeaking();
+    
     // Check if Speech Recognition API is supported
     if (!('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
       toast({
@@ -391,6 +443,7 @@ export const useInterviewSimulator = () => {
     return () => {
       stopTimer();
       stopListening();
+      stopSpeaking();
     };
   }, []);
   
@@ -411,6 +464,7 @@ export const useInterviewSimulator = () => {
     setTimePerQuestion,
     resumeText,
     setResumeText,
+    isSpeaking,
     
     startInterview,
     endInterview,
@@ -419,6 +473,8 @@ export const useInterviewSimulator = () => {
     toggleListening,
     handleAnswerChange,
     submitAnswer,
-    generateReport
+    generateReport,
+    speakQuestion,
+    stopSpeaking
   };
 };

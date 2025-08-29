@@ -1,14 +1,18 @@
-
 import { InterviewSettings } from '@/components/interview/InterviewSetup';
 import { InterviewMessage, InterviewFeedback, InterviewQuestion } from '@/types/interview';
+import { apiKeys } from './apiKeys';
+
+const INTERVIEW_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent";
 
 // Analyze resume and generate questions based on the resume and job details
 export const analyzeResumeAndGenerateQuestions = async (
   settings: InterviewSettings,
-  apiKey: string
+  apiKey?: string
 ): Promise<InterviewQuestion[]> => {
   try {
-    console.log('Analyzing resume and generating questions...');
+    console.log('🎯 InterviewAI: Analyzing resume and generating questions...');
+    
+    const useApiKey = apiKey || apiKeys.INTERVIEW_AI_API_KEY;
     
     // Prepare prompt for Gemini, customized for difficulty and type
     let difficultyContext = 'standard';
@@ -49,12 +53,11 @@ export const analyzeResumeAndGenerateQuestions = async (
     6. Do not include any other text, explanations, or numbering.
     `;
     
-    // Make API call to Gemini
-    const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent', {
+    // Make API call to Gemini Flash 2.0
+    const response = await fetch(`${INTERVIEW_API_URL}?key=${useApiKey}`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'x-goog-api-key': apiKey,
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         contents: [{
@@ -109,14 +112,15 @@ export const analyzeResumeAndGenerateQuestions = async (
       
       return {
         type,
-        question
+        question: question.replace(/^\d+\.\s*/, '').trim() // Remove numbering if present
       };
     });
     
+    console.log('✅ InterviewAI: Generated', questions.length, 'questions');
     return questions;
     
   } catch (error) {
-    console.error('Error analyzing resume:', error);
+    console.error('❌ InterviewAI: Error analyzing resume:', error);
     
     // Return fallback questions if the API fails
     return [
@@ -162,10 +166,12 @@ export const evaluateAnswer = async (
   answer: string,
   jobTitle: string,
   jobLevel: string,
-  apiKey: string
+  apiKey?: string
 ): Promise<string> => {
   try {
-    console.log('Evaluating answer...');
+    console.log('🎯 InterviewAI: Evaluating answer...');
+    
+    const useApiKey = apiKey || apiKeys.INTERVIEW_AI_API_KEY;
     
     // Prepare prompt for Gemini
     const prompt = `
@@ -186,12 +192,11 @@ export const evaluateAnswer = async (
     Format your response with markdown for better readability (use bold, bullets, etc).
     `;
     
-    // Make API call to Gemini
-    const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent', {
+    // Make API call to Gemini Flash 2.0
+    const response = await fetch(`${INTERVIEW_API_URL}?key=${useApiKey}`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'x-goog-api-key': apiKey,
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         contents: [{
@@ -218,7 +223,7 @@ export const evaluateAnswer = async (
     return feedback;
     
   } catch (error) {
-    console.error('Error evaluating answer:', error);
+    console.error('❌ InterviewAI: Error evaluating answer:', error);
     
     // Return a generic response if the API fails
     return "That's an interesting response. As we continue, try to provide specific examples and quantify your achievements when possible. Let's move to the next question.";

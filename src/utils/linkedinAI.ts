@@ -1,7 +1,7 @@
 
 import { apiKeys } from "./apiKeys";
 
-const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
+const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent";
 
 interface LinkedInResponse {
   content: string;
@@ -10,7 +10,7 @@ interface LinkedInResponse {
 
 export const generateLinkedInSuggestions = async (userMessage: string): Promise<LinkedInResponse> => {
   console.log("🤖 LinkedInAI: Processing user query:", userMessage);
-  console.log("🔑 Using Gemini API with advanced LinkedIn optimization model");
+  console.log("🔑 Using Gemini Flash 2.0 with LinkedIn-specific API key");
   
   const prompt = `
     You are an expert LinkedIn optimization consultant with years of experience helping professionals enhance their profiles. 
@@ -34,9 +34,9 @@ export const generateLinkedInSuggestions = async (userMessage: string): Promise<
   `;
 
   try {
-    console.log("📡 Making API call to LinkedIn optimization model...");
+    console.log("📡 Making API call to Gemini Flash 2.0 for LinkedIn optimization...");
     
-    const response = await fetch(`${API_URL}?key=${apiKeys.GEMINI_API_KEY}`, {
+    const response = await fetch(`${API_URL}?key=${apiKeys.LINKEDIN_OPTIMIZER_API_KEY}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -47,7 +47,9 @@ export const generateLinkedInSuggestions = async (userMessage: string): Promise<
         }],
         generationConfig: {
           temperature: 0.7,
-          maxOutputTokens: 1024
+          maxOutputTokens: 1024,
+          topP: 0.9,
+          topK: 40
         }
       })
     });
