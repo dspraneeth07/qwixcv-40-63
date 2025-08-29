@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
@@ -131,12 +132,15 @@ const UserNavbar = () => {
           </NavigationMenuContent>
         </NavigationMenuItem>
 
-        {/* QwixAI - New Menu Item */}
+        {/* QwixAI - Standalone Menu Item */}
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
             <Link
               to="/qwix-ai"
-              className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-gradient-to-r from-orange-50 to-purple-50 px-4 py-2 text-sm font-medium text-orange-700 transition-colors hover:bg-gradient-to-r hover:from-orange-100 hover:to-purple-100 hover:text-orange-800 focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50 border border-orange-200"
+              className={cn(
+                navigationMenuTriggerStyle(),
+                "group inline-flex h-10 w-max items-center justify-center rounded-md bg-gradient-to-r from-orange-50 to-purple-50 px-4 py-2 text-sm font-medium text-orange-700 transition-colors hover:bg-gradient-to-r hover:from-orange-100 hover:to-purple-100 hover:text-orange-800 focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50 border border-orange-200"
+              )}
             >
               <Zap className="mr-2 h-4 w-4" />
               QwixAI

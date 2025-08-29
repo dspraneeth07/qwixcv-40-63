@@ -45,7 +45,7 @@ Provide a helpful, detailed response. If appropriate, end with 2-4 relevant foll
       }
     };
 
-    const response = await fetch(`${API_URL}?key=${apiKeys.GEMINI_API_KEY}`, {
+    const response = await fetch(`${API_URL}?key=${apiKeys.QWIXAI_API_KEY}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

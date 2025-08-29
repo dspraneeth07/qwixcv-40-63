@@ -67,7 +67,7 @@ export const generateLinkedInSuggestions = async (userMessage: string): Promise<
     if (!response.ok) {
       const errorText = await response.text();
       console.error("API Error Response:", errorText);
-      throw new Error(`Gemini API error: ${response.status} - ${errorText}`);
+      throw new Error(`LinkedIn AI API error: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
@@ -75,7 +75,7 @@ export const generateLinkedInSuggestions = async (userMessage: string): Promise<
     
     if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
       console.error("Unexpected API response structure:", data);
-      throw new Error("Invalid response from Gemini API");
+      throw new Error("Invalid response from LinkedIn AI API");
     }
 
     const fullResponse = data.candidates[0].content.parts[0].text;
@@ -113,7 +113,7 @@ export const generateLinkedInSuggestions = async (userMessage: string): Promise<
     // Provide more specific error messages
     if (error instanceof Error) {
       if (error.message.includes('API key')) {
-        throw new Error("Invalid API key. Please check your Gemini API configuration.");
+        throw new Error("Invalid API key. Please check your LinkedIn AI configuration.");
       } else if (error.message.includes('quota')) {
         throw new Error("API quota exceeded. Please try again later.");
       } else if (error.message.includes('network')) {
