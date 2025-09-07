@@ -5,7 +5,7 @@ import {
   FileText, Instagram, Twitter, Linkedin, Globe, Sparkles, 
   Award, Shield, User, MessageSquare, Briefcase, 
   GraduationCap, Route, BarChart, Code, Rocket, TrendingUp, 
-  Star, ChevronDown, LogIn, LogOut, Menu, UserPlus
+  Star, ChevronDown, LogIn, LogOut, Menu, UserPlus, Zap
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -61,6 +61,10 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
     { name: "QwiXPro Builder", href: "/qwixpro-builder", icon: Rocket },
     { name: "Skill Gap Analysis", href: "/skill-gap-analysis", icon: TrendingUp },
     { name: "Mindprint Assessment", href: "/mindprint-assessment", icon: Star },
+  ];
+
+  const aiLinks = [
+    { name: "QwixAI", href: "/qwix-ai", icon: Sparkles },
   ];
 
   const companyLinks = [
@@ -177,6 +181,15 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
                 </DropdownMenuGroup>
               </DropdownMenuContent>
             </DropdownMenu>
+
+            {/* QwixAI - Standalone Link */}
+            <Button asChild variant="ghost" className="text-white hover:bg-white/10 relative">
+              <Link to="/qwix-ai" className="flex items-center gap-2">
+                <Zap className="h-4 w-4" />
+                QwixAI
+                <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs px-1.5 py-0.5 rounded-full">New</span>
+              </Link>
+            </Button>
 
             {/* Company links */}
             {companyLinks.map((link) => (
@@ -331,6 +344,22 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
                       >
                         {item.icon && <item.icon className="h-5 w-5" />}
                         {item.name}
+                      </Link>
+                    ))}
+                  </div>
+
+                  <div className="space-y-1 px-2">
+                    <p className="text-sm font-semibold text-white/70 mb-2">AI ASSISTANT</p>
+                    {aiLinks.map((item) => (
+                      <Link
+                        key={item.name}
+                        to={item.href}
+                        className="flex items-center gap-3 py-2 text-base font-medium text-white/90 hover:text-white"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        {item.icon && <item.icon className="h-5 w-5" />}
+                        {item.name}
+                        <span className="ml-auto bg-orange-500 text-white text-xs px-2 py-1 rounded-full">New</span>
                       </Link>
                     ))}
                   </div>
