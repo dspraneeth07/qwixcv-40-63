@@ -34,7 +34,7 @@ const QwixAI = () => {
             </h1>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-4">
               Meet India's first AI assistant proudly representing Telangana & Andhra Pradesh! 
-              From the land of Charminar and HITEC City, I'm here to help you with anything and everything.
+              From the land of Hyderabad and Amaravati, I'm here to help you with anything and everything.
             </p>
             <div className="flex justify-center gap-2 flex-wrap">
               <Badge variant="secondary" className="bg-gradient-to-r from-orange-50 to-orange-100 text-orange-700 border-orange-200">
@@ -47,7 +47,7 @@ const QwixAI = () => {
               </Badge>
               <Badge variant="secondary" className="bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 border-blue-200">
                 <Sparkles className="h-3 w-3 mr-1" />
-                Gemini 2.0 Flash
+                QwiX AI 2025
               </Badge>
               <Badge variant="secondary" className="bg-gradient-to-r from-green-50 to-green-100 text-green-700 border-green-200">
                 <Star className="h-3 w-3 mr-1" />
@@ -124,7 +124,7 @@ const QwixAI = () => {
                     </div>
                     <div className="flex justify-between">
                       <span>Model:</span>
-                      <span>Gemini 2.0 Flash</span>
+                      <span>QwiX AI 2025</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Capabilities:</span>
@@ -157,7 +157,7 @@ const QwixAI = () => {
                   
                   <div className="text-xs p-3 bg-white/50 rounded border-l-4 border-purple-400">
                     <p className="font-medium text-purple-800 mb-1">🚀 Advanced AI</p>
-                    <p className="text-purple-700">Powered by Google's latest Gemini 2.0 Flash for lightning-fast, accurate responses.</p>
+                    <p className="text-purple-700">Powered by QwikZen Group India for lightning-fast, accurate responses.</p>
                   </div>
 
                   <div className="text-xs p-3 bg-white/50 rounded border-l-4 border-blue-400">

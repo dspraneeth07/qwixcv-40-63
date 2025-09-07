@@ -1,6 +1,6 @@
 
 import { ReactNode } from "react";
-import { Link } from "react-router-dom";
+import { href, Link } from "react-router-dom";
 import { 
   FileText, Instagram, Twitter, Linkedin, Globe, Sparkles, 
   Award, Shield, User, MessageSquare, Briefcase, 
@@ -44,6 +44,7 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
     { name: "LinkedIn Optimizer", href: "/linkedin-optimizer", icon: Linkedin },
     { name: "Compare Resumes", href: "/resume-compare", icon: FileText },
     { name: "QwiXCert", href: "/certification-center", icon: Shield },
+    { name: "QwiX AI", href: "/qwixai", icon: Sparkles },
     { name: "Job Board", href: "/job-board", icon: Briefcase },
   ];
 
@@ -179,15 +180,37 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
             </DropdownMenu>
 
             {/* Company links */}
-            {companyLinks.map((link) => (
-              <Button asChild key={link.name} variant="ghost" className="text-white hover:bg-white/10">
-                <Link to={link.href} className="flex items-center gap-2">
-                  {link.icon && <link.icon className="h-4 w-4" />}
-                  {link.name}
-                </Link>
-              </Button>
-            ))}
-
+                        <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  className="text-white/90 hover:text-white hover:bg-white/10 p-1.5 h-auto px-2"
+                >
+                  <div className="flex items-center gap-1.5">
+                    <Globe className="h-4 w-4" />
+                    <span className="font-medium text-sm">About QwikZen</span>
+                    <ChevronDown className="h-4 w-4" />
+                  </div>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="center" className="w-48">
+                <DropdownMenuGroup>
+                  {companyLinks.map((item) => (
+                    <DropdownMenuItem key={item.name} asChild>
+                      <Link 
+                        to={item.href} 
+                        className="cursor-pointer flex items-center gap-2"
+                      >
+                        {item.icon && <item.icon className="h-4 w-4" />}
+                        <span>{item.name}</span>
+                      </Link>
+                    </DropdownMenuItem>
+                  ))}
+                  
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
             <WalletConnect />
 
             {isAuthenticated && user ? (

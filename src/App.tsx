@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from "@/context/AuthContext";
 import { BlockchainProvider } from "@/context/BlockchainContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import Layout from "@/components/layout/Layout";
+import Layout from "@/components/layout/Layout";  
 import Dashboard from "@/pages/Dashboard";
 import StudentHome from "@/pages/StudentHome";
 import OrganizationHome from "@/pages/OrganizationHome";
@@ -17,6 +17,7 @@ import Unauthorized from "@/pages/Unauthorized";
 import Profile from "@/pages/Profile";
 import Settings from "@/pages/Settings";
 import CertificationCenter from "@/pages/CertificationCenter";
+import CertificationTest from "./pages/CertificationTest";
 import CertificateDetails from "@/pages/CertificateDetails";
 import VerifyCertificate from "@/pages/VerifyCertificate";
 import VerifyDocument from "@/pages/VerifyDocument";
@@ -45,6 +46,8 @@ import BlockchainVault from "./pages/BlockchainVault";
 import About from "@/pages/About";
 import Contact from "@/pages/Contact";
 import QwixAI from "./pages/QwixAI";
+import ShareToCompany from "./pages/ShareToCompany";
+import ResumePreview from "./pages/ResumePreview";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -136,7 +139,43 @@ function App() {
                   </ProtectedRoute>
                 } 
               />
+              <Route 
+                path="/resume-preview" 
+                element={
+                  <ProtectedRoute>
+                    <ResumePreview />
+                  </ProtectedRoute>
+                } 
+              />
+
+              <Route 
+                path="/share-to-company" 
+                element={
+                  <ProtectedRoute>
+                    <ShareToCompany />
+                  </ProtectedRoute>
+                }
+              />
               
+              
+              <Route 
+                path="/certification-center" 
+                element={
+                  <ProtectedRoute>
+                    <CertificationCenter />
+                  </ProtectedRoute>
+                } 
+              />
+
+              <Route 
+                path="/certification/:testId" 
+                element={
+                  <ProtectedRoute>
+                    <CertificationTest />
+                  </ProtectedRoute>
+                } 
+              />
+
               <Route 
                 path="/linkedin-optimizer" 
                 element={
@@ -166,7 +205,7 @@ function App() {
               
               {/* QwixAI Route */}
               <Route 
-                path="/qwix-ai" 
+                path="/QwiXAI" 
                 element={
                   <ProtectedRoute>
                     <QwixAI />
@@ -183,6 +222,7 @@ function App() {
                   </ProtectedRoute>
                 } 
               />
+              
               
               <Route 
                 path="/interview-coach" 

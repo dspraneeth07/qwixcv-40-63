@@ -11,13 +11,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { BookOpen, Award, Shield, Brain } from "lucide-react";
 import { useBlockchain } from '@/context/BlockchainContext';
-import { useToast } from '@/components/ui/use-toast';
 
 const CertificationCenter = () => {
   const [tests, setTests] = useState<TestInfo[]>([]);
   const [userCertificates, setUserCertificates] = useState<string[]>([]);
   const { isConnected, account } = useBlockchain();
-  const { toast } = useToast();
 
   useEffect(() => {
     // Fetch test data
@@ -87,19 +85,13 @@ const CertificationCenter = () => {
       ];
       
       setTests(testData);
-      
-      // Provide feedback to the user that tests are loaded
-      toast({
-        title: "Tests Loaded",
-        description: `${testData.length} certification tests are available`,
-      });
     };
     
     // Fetch user's certificates
     const fetchUserCertificates = () => {
       try {
         const certificates = getUserCertificates();
-        const certifiedTestIds = certificates.map(cert => cert.testId);
+        const certifiedTestIds = certificates.map(cert => cert.title.split(' - ')[0]);
         setUserCertificates(certifiedTestIds);
       } catch (error) {
         console.error("Error fetching user certificates:", error);
@@ -109,7 +101,7 @@ const CertificationCenter = () => {
     
     fetchTestData();
     fetchUserCertificates();
-  }, [isConnected, account, toast]);
+  }, [isConnected, account]);
 
   return (
     <MainLayout>
