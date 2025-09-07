@@ -45,9 +45,6 @@ import BlockchainVault from "./pages/BlockchainVault";
 import About from "@/pages/About";
 import Contact from "@/pages/Contact";
 import QwixAI from "./pages/QwixAI";
-import ResumePreview from "./pages/ResumePreview";
-import ShareToCompany from "./pages/ShareToCompany";
-import CertificationTest from "./pages/CertificationTest";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -163,24 +160,6 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <ResumeCompare />
-                  </ProtectedRoute>
-                } 
-              />
-              
-              <Route 
-                path="/resume-preview" 
-                element={
-                  <ProtectedRoute>
-                    <ResumePreview />
-                  </ProtectedRoute>
-                } 
-              />
-              
-              <Route 
-                path="/share-to-company" 
-                element={
-                  <ProtectedRoute>
-                    <ShareToCompany />
                   </ProtectedRoute>
                 } 
               />
@@ -302,15 +281,6 @@ function App() {
                 element={
                   <ProtectedRoute allowedRoles={['student', 'admin']}>
                     <CertificateDetails />
-                  </ProtectedRoute>
-                } 
-              />
-              
-              <Route 
-                path="/certification-test/:testId" 
-                element={
-                  <ProtectedRoute allowedRoles={['student', 'admin']}>
-                    <CertificationTest />
                   </ProtectedRoute>
                 } 
               />
